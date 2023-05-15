@@ -1,6 +1,6 @@
 FROM alpine
-COPY ["./myapp", "/usr/myapp" ]
-WORKDIR /usr/myapp
+COPY ["./flask-app", "/usr/flask-app" ]
+WORKDIR /usr/flask-app
 RUN apk upgrade
 RUN apk add python3
 RUN python3 -m ensurepip
