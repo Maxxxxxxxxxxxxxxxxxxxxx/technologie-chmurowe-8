@@ -3,10 +3,28 @@ services:
   api-service:
     container_name: api-container
     build:
-      context: ./1
+      context: ./2
       dockerfile: ./Dockerfile
     ports:
       - 8080:8080
+
+  2-api:
+    build:
+      context: ./2
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - backend_network
+
+  2-db:
+    image: redis
+    container_name: redis-container
+    ports:
+      - 6379:6379
+    networks:
+      - backend_network
+
 networks:
   backend_network:
     driver: bridge
