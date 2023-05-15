@@ -1,0 +1,74 @@
+version: "3.8"
+services:
+  api-service:
+    container_name: api-container
+    build:
+      context: ./zad1
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+
+  zad2-api:
+    build:
+      context: ./zad2
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - backend_network
+
+  zad2-db:
+    image: redis
+    container_name: redis-container
+    ports:
+      - 6379:6379
+    networks:
+      - backend_network
+
+  zad3-redis:
+    image: redis
+    container_name: redis-container
+    ports:
+      - 6379:6379
+    networks:
+      - backend_network
+
+  zad3-postgres:
+    image: postgres
+    container_name: postgres-container
+    ports:
+      - 5432:5432
+    networks:
+      - backend_network
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  zad3-nginx:
+    container_name: nginx-container
+    build:
+      context: zad3/nginx
+      dockerfile: ./Dockerfile
+    networks:
+      - backend_network
+    ports:
+      - 80:80
+    depends_on:
+      - zad3-express
+
+  zad3-express:
+    build:
+      context: zad3/express
+      dockerfile: ./Dockerfile
+    networks:
+      - backend_network
+    ports:
+      - 3000:3000
+    depends_on:
+      - zad3-redis
+      - zad3-postgres
+
+networks:
+  backend_network:
+    driver: bridge
+    driver_opts:
+      parent: en0
