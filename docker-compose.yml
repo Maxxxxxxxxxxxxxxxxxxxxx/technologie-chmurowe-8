@@ -21,9 +21,51 @@ services:
     image: redis
     container_name: redis-container
     ports:
+      - 6378:6378
+    networks:
+      - backend_network
+
+  3-redis:
+    image: redis
+    container_name: redis
+    ports:
       - 6379:6379
     networks:
       - backend_network
+
+  3-postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - backend_network
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  3-nginx:
+    container_name: nginx
+    build:
+      context: 3/nginx
+      dockerfile: ./Dockerfile
+    networks:
+      - backend_network
+    ports:
+      - 80:80
+    depends_on:
+      - 3-express
+    
+  3-express:
+    build:
+      context: 3/express
+      dockerfile: ./Dockerfile
+    networks:
+      - backend_network
+    ports: 
+      - 3003:3003
+    depends_on:
+      - 3-redis
+      - 3-postgres
 
 networks:
   backend_network:
